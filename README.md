@@ -30,7 +30,7 @@ brew install ansible
 pip3 install ansible
 ```
 
-## Unnstall:
+## Uninstall:
 
 ```bash
 pip3 uninstall ansible
@@ -98,144 +98,167 @@ ansible --version
 
 #### 5. Запуск команды "ping" без указания: -i hosts.txt:
 
-
 ```bash
 ansible all -m ping    
 ```
+
+<br /><br />
+
+#### 6. Создание плейбука:
+
+> nano myfile.yml
+> ```
+> ---
+> 
+> - name: Test Connection to my servers
+>   hosts: all
+>   become: yes
+>
+>   tasks:
+>
+>     - name: Ping my servers
+>       ping:
+>  
+> ...
+> ```
+
+Важно не забыть написать "---" первой строкой файла!
+
+*  `- name:` **- Это называется Лист** 
+
+<br /><br />
+
+#### 7. Запуск созданного плейбука:
+
+```bash
+ansible-playbook myfile.yml
+```
+
+<br /><br /><br /><br />
+
+## Более подробная инструкция по файлу "hosts.txt"
+
+* https://www.youtube.com/watch?v=KsBb4ezQXq8&list=PLg5SS_4L6LYufspdPupdynbMQTBnZd31N&index=6
+
+> nano hosts.txt
+> ```
+> 10.50.1.1
+> 10.50.1.2
+> 
+> [staging_DB]
+> 2.194.19.166
+> 2.194.19.167
+> 
+> [staging_WEB]
+> 3.236.37.210
+> 3.236.37.211
+> 3.236.37.212
+> 
+> [staging_APP]
+> 3.236.186.238
+> 3.236.186.239
+> 
+> [staging_ALL:children]
+> staging_DB
+> staging_WEB
+> staging_APP
+> 
+> [prod_DB]
+> 2.194.19.164
+> 2.194.19.36
+> 
+> [prod_WEB]
+> 3.236.37.53
+> 3.236.37.55
+> 3.236.37.61
+> 
+> [prod_APP]
+> 3.236.186.213
+> 3.236.186.223
+> ```
+
+Здесь описаны все наши сервера.<br>
+Все они кроме первых двух "10.50.1.1" и "10.50.1.2" входят в группу "all".<br>
+Первые два входят в группу "ungroup".<br>
+
+<br /><br />
+
+#### Создание групп с группами серверов:
+
+> ```
+> [prod_ALL:children]
+> prod_DB
+> prod_WEB
+> prod_APP
+>
+> [DB_ALL:children]
+> staging_DB
+> prod_DB
+> 
+> [CUSTOM:children]
+> staging_WEB
+> prod_APP
+> staging_APP
+> staging_DB
+> ```
+
+<br /><br />
+
+#### Создание групп переменных
+
+Они удобны для того — что-бы не писать для каждого сервера повторяющиеся данные, например такте как<br>
+ansible_user=ubuntu<br>
+или если у нескольких серверов будет путь к одному SSH ключу:
+
+> ```
+> [staging_servers]
+> linux2 ansible_host=3.236.37.216
+> linux3 ansible_host=3.236.186.202
+> 
+> [staging_servers:vars]
+> ansible_user=ubuntu
+> ansible_ssh_private_key_file=/home/stepanenko/.ssh/staging_rsa
+> ```
+
+<br /><br />
+
+#### Отобразить дерево серверов со связанными переменными:
+
+```bash
+ansible-inventory --list
+```
+
+
+
+
+
 <br /><br /><br /><br /><br /><br /><br /><br />
 
 *  **  **
 *  **  **
 *  **  **
+*  **  **
+
+<br /><br /><br /><br /><br /><br /><br /><br />
 
 
+## Более подробная инструкция по "Add-Hoc" командам
 
+* https://www.youtube.com/watch?v=3eRQDA7Y-lA&list=PLg5SS_4L6LYufspdPupdynbMQTBnZd31N&index=7
 
-
-
-
-9. nano myfile.yml
-
----
-
-- name: Test Connection to my servers
-  hosts: all
-  become: yes
-  
-  tasks:
-  
-  - name: Ping my servers
-    ping:
-
-
-10. ansible-playbook myfile.yml
-
-================================================================================
-
-
-
-
-
-
-
-
-
-================================================================================
-Более подробная инструкция по "hosts.txt"
-
-https://www.youtube.com/watch?v=KsBb4ezQXq8&list=PLg5SS_4L6LYufspdPupdynbMQTBnZd31N&index=6
---------------------------------------------------------------------------------
-
-10.50.1.1
-10.50.1.2
-
-[staging_DB]
-2.194.19.166
-2.194.19.167
-
-[staging_WEB]
-3.236.37.210
-3.236.37.211
-3.236.37.212
-
-[staging_APP]
-3.236.186.238
-3.236.186.239
-
-[staging_ALL:children]
-staging_DB
-staging_WEB
-staging_APP
-
-[prod_DB]
-2.194.19.164
-2.194.19.36
-
-[prod_WEB]
-3.236.37.53
-3.236.37.55
-3.236.37.61
-
-[prod_APP]
-3.236.186.213
-3.236.186.223
-
-[prod_ALL:children]
-prod_DB
-prod_WEB
-prod_APP
-
-    i: Эти все сервера входят в группу "all" только кроме кроме "10.50.1.1" b "10.50.1.2" - эти два входят в группу "ungroup".
-
-    i: Очень удобно можно создать группу, например, "DB_ALL" или "CUSTOM"
-
-[DB_ALL:children]
-staging_DB
-prod_DB
-
-[CUSTOM:children]
-staging_WEB
-prod_APP
-staging_APP
-staging_DB
-
-
-    i: Можно сделать группу переменных, для того что-бы не писать для каждого 
-    i: сервера повторяющиеся данные, например такте как "ansible_user=ubuntu"
-    i: или если у нескольких серверов будет путь к одному SSH ключу.
-
-[staging_servers]
-linux2 ansible_host=3.236.37.216
-linux3 ansible_host=3.236.186.202
-
-[staging_servers:vars]
-ansible_user=ubuntu
-
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-> ansible-inventory --list
-
-    i: Показать дерево серверов со связанными переменными.
-
-================================================================================
-
-
-
-
-
-================================================================================
-Более подробная инструкция по "Add-Hoc" командам
---------------------------------------------------------------------------------
-
-Add-Hoc - отдельаня команда, если она не в ПлейБуке
+Add-Hoc — это отдельные команды, если она не в ПлейБуке
 
 Пример запуска: 
-> ansible all -m ping
-> ansible all -m shell -a "uptime"
 
------------------
+```bash
+ansible all -m ping
+```
+
+```bash
+ansible all -m shell -a "uptime"
+```
+
+<br /><br />
 
 -m ping			- Пинг
 -m setup			- Сканировать сервер и выдать ВСЕ ВСЕ данные о нем

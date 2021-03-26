@@ -1,16 +1,12 @@
+---
+
 - name: Test Connection to my servers
   hosts: all
   become: yes
-  
-  tasks:
-  
-  - name: Ping my servers
-    ping:
 
-  - name: Creates directory
-    file:
-      path: Hello/123
-      state: directory
-      owner: ubuntu
-      group: ubuntu
-      mode: 0777
+  tasks:
+
+    - name: Ping my servers
+      ping:
+
+...
