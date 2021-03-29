@@ -46,10 +46,10 @@ pip3 uninstall ansible
 
 > nano hosts.txt
 > ```
-> [myxa_servers]
+> [MYXA_SERVERS]
 > linux1 ansible_host=2.194.19.166 ansible_user=ubuntu
 > 
-> [staging_servers]
+> [STAGING_SERVERS]
 > linux2 ansible_host=3.236.37.216 ansible_user=ubuntu
 > linux3 ansible_host=3.236.186.202 ansible_user=ubuntu
 > ```
@@ -63,11 +63,11 @@ ansible -i hosts.txt all -m ping
 ```
 
 ```bash
-ansible -i hosts.txt myxa_servers -m ping
+ansible -i hosts.txt MYXA_SERVERS -m ping
 ```
 
 ```bash
-ansible -i hosts.txt staging_servers -m ping
+ansible -i hosts.txt STAGING_SERVERS -m ping
 ```
 
 <br /><br />
@@ -211,11 +211,11 @@ ansible_user=ubuntu<br>
 или если у нескольких серверов будет путь к одному SSH ключу:
 
 > ```
-> [staging_servers]
+> [STAGING_SERVERS]
 > linux2 ansible_host=3.236.37.216
 > linux3 ansible_host=3.236.186.202
 > 
-> [staging_servers:vars]
+> [STAGING_SERVERS:vars]
 > ansible_user=ubuntu
 > ansible_ssh_private_key_file=/home/stepanenko/.ssh/staging_rsa
 > ```
@@ -228,19 +228,7 @@ ansible_user=ubuntu<br>
 ansible-inventory --list
 ```
 
-
-
-
-
-<br /><br /><br /><br /><br /><br /><br /><br />
-
-*  **  **
-*  **  **
-*  **  **
-*  **  **
-
-<br /><br /><br /><br /><br /><br /><br /><br />
-
+<br /><br /><br /><br />
 
 ## Более подробная инструкция по "Add-Hoc" командам
 
@@ -258,49 +246,52 @@ ansible all -m ping
 ansible all -m shell -a "uptime"
 ```
 
+<br />
+
+### Сами команды:
+
+*  `-m ping` **- Пинг**
 <br /><br />
-
--m ping			- Пинг
--m setup			- Сканировать сервер и выдать ВСЕ ВСЕ данные о нем
-
--m shell -a "uptime"	- Выполнить любую Линуксовскую команду
--m shell -a "pwd"
-
--m command -a "uptime"	- То-же самое что и shell, только запускается НЕ в 
-			  режиме SHELL, тоесть он не будет видеть
-			  Environment Variables (Переменные окружающией среды)
-			  $HOME и < > | : &
-
--m copy -a "src=2.txt dest=/home/ubuntu/ mode=777"	- Скопировать файл на все сервера
-						  	  mode=777 - необязательный параметр
-								  	  
--m copy -a "src=2.txt dest=/home/ mode=777" -b 		- Скопировать файл в режиме SUDO
-
--m file -a "path=/home/ububntu/1.txt state=absent"	- Удаление файла или папки.
-							  Так-же, при помощи этого модуля можно создавать дериектории, ....
-
-
--m get_url -a "url=https://neofacto.com/wp-content/uploads/2019/08/sticker-hello-300x211.png dest=/home/ubuntu/"
-							- Скачать файл из интернета
-
--m yum -a "name=stress state=installed" -b		- Утсановка приложений (у меня не сработала)
--m apt -a "name=stress state=latest" -b			- Рабочая
--m apt -a "name=gunicorn state=latest" -b
-
--m apt -a "name=stress state=absent" -b			- Удаление приложений
-
--m uri -a "url=https://myxa.com.ua"			- Проверить, может ли сервер подконнектиться к сайту (status: 200)
--m uri -a "url=https://myxa.com.ua return_content=yes"	- Получить контент с сайта
-
--m service -a "name=httpd state=started enabled=yes" -b	- Запустить сервис httpd (у меня не сработал, но должен был запуститься Apache на всех серврах)
-							  enabled=yes - это необязательный параметр, позвонялет запускать данный сервис при старте всей системы
-							  
--m ping -v	-vv	-vvv	-vvvv			- Запуск команд с ПОДРОБНОЙ информацией
+*  `-m setup` **- Сканировать сервер и выдать ВСЕ ВСЕ данные о нем**
+<br /><br />
+*  `-m shell -a "uptime"` **- Выполнить любую Линуксовскую команду**
+*  `-m shell -a "pwd"` **Показать путь к текущему месту**
+<br /><br />
+*  `-m command -a "uptime"` **- То-же самое что и shell, только запускается НЕ в режиме SHELL, тоесть он не будет видеть Environment Variables (Переменные окружающией среды) $HOME и < > | : &**
+<br /><br />
+*  `-m copy -a "src=2.txt dest=/home/ubuntu/ mode=777"` **- Скопировать файл на все сервера. А атрибут "mode=777" - необязательный параметр**
+<br /><br />
+*  `-m copy -a "src=2.txt dest=/home/ mode=777" -b` **- Скопировать файл в режиме SUDO**
+<br /><br />
+*  `-m file -a "path=/home/ububntu/1.txt state=absent"` **- Удаление файла или папки. Так-же, при помощи этого модуля можно создавать дериектории, ....**
+<br /><br />
+*  `-m get_url -a "url=https://neofacto.com/wp-content/uploads/2019/08/sticker-hello-300x211.png dest=/home/ubuntu/"` **- Скачать файл из интернета**
+<br /><br />
+*  `-m yum -a "name=stress state=installed" -b` **- Утсановка приложений (у меня не сработала)**
+*  `-m apt -a "name=stress state=latest" -b` **- Рабочая**
+*  `-m apt -a "name=gunicorn state=latest" -b`
+<br /><br />
+*  `-m apt -a "name=stress state=absent" -b` **- Удаление приложений**
+<br /><br />
+*  `-m uri -a "url=https://myxa.com.ua"` **- Проверить, может ли сервер подконнектиться к сайту (status: 200)**
+*  `-m uri -a "url=https://myxa.com.ua return_content=yes"` **- Получить контент с сайта**
+<br /><br />
+*  `-m service -a "name=httpd state=started enabled=yes" -b` **- Запустить сервис httpd (у меня не сработал, но должен был запуститься Apache на всех серврах). А параметр "enabled=yes" - это необязательный, позвонялет запускать данный сервис при старте всей системы**
+<br /><br />
+*  `-m ping -v` **- Запуск команд с подробной технической информацией о сервере**
+*  `-m ping -vv` **- с Более подробной информацией**
+*  `-m ping -vvv` **- с еще Более**
+*  `-m ping -vvvv` **- с еще Более**
+<br /><br />
+*  `-m reboot -b` **- Перезагрузить все сервера**
+<br /><br />
+   
+*  **  **
+*  **  **
+*  **  **
+*  **  **
 
 ansible-doc -l						- Показать все достпуне модули в ansible
-
--m reboot -b						- Перезагрузить все сервера
-
 
 --------------------------------
 CREATE FOLDER
@@ -318,21 +309,76 @@ From - Playbook:
     group: ubuntu
     mode: 0777
 --------------------------------
-
-
-      
-================================================================================
-
-
-
+*  **  **
+*  **  **
+*  **  **
+*  **  **
 
 
 
 
+<br /><br /><br /><br />
+*  **  **
+
+## Вынос переменных в отдельный файл
+
+* https://www.youtube.com/watch?v=_fAgi3jeQJM&list=PLg5SS_4L6LYufspdPupdynbMQTBnZd31N&index=9
+
+<br />
+
+#### Показать список всех серверов и какие переменные к ним относятся:
+
+```bash
+ansible-inventory --list - 
+```
+
+<br />
+
+#### Создать папку, в которой будут храниться файлы с переменными:
+
+```bash
+mkdir group_vars
+```
+
+<br />
+
+#### В ней создавать файлы с названиями групп из "hosts.txt"
+
+> nano group_vars/STAGING_SERVERS
+> ```
+> ---
+> ansible_user                 : ubuntu
+> ansible_ssh_private_key_file : /home/stepanenko/.ssh/staging_rsa
+> ```
+
+Внимание! Знак "=" заменяем на знак ":"
+
+<br />
+
+> nano group_vars/MYXA_SERVERS
+> ```
+> ---
+> ansible_user                 : ubuntu
+> ansible_ssh_private_key_file : /home/stepanenko/.ssh/myxa_rsa
+> ``` 
+
+Внимание! Знак "=" заменяем на знак ":"
+
+<br />
+
+#### Запуск и проверка:
+
+```bash
+ansible-playbook myfile.yml
+```
+
+*  **  **
 
 
 
 
+<br /><br /><br /><br /><br /><br /><br /><br />
+<br /><br /><br /><br /><br /><br /><br /><br />
 
 ===================================================================
 Ошибка: Невозможно заголиниться на "docker login registry-exist.exist.ua" или выполнить "docker run hello-world"

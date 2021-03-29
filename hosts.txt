@@ -1,9 +1,6 @@
-[myxa_servers]
-linux1 ansible_host=4.211.183.122 ansible_user=ubuntu
+[MYXA_SERVERS]
+linux1 ansible_host=4.211.183.122
 
-[staging_servers]
-linux2 ansible_host=3.236.37.216
-linux3 ansible_host=3.236.186.202
-
-[staging_servers:vars]
-ansible_user=ubuntu
+[STAGING_SERVERS]
+linux2 ansible_host=3.235.169.51
+linux3 ansible_host=3.220.167.38
