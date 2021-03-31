@@ -1,0 +1,21 @@
+---
+
+- name: Create custom Folder an install Gunicorn
+  hosts: STAGING_SERVERS
+  become: yes
+
+  tasks:
+
+  - name: Create Folder
+    file:
+        path : Hello/123
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode : 0777
+
+  - name: Install Gunicorn
+    apt: name=gunicorn state=latest
+
+  - name: Start Gunicorn and Enabled in on the every boot
+    service: name=gunicorn state=started enabled=yes

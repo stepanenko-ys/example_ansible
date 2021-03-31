@@ -1,3 +1,4 @@
+***
 
 # ANSIBLE
 
@@ -5,14 +6,32 @@
 
 **Система автоматизации конфигурации и управления серварами**
 
-
 * https://docs.ansible.com/ansible/latest/index.html
 
 * https://www.youtube.com/watch?v=Ck1SGolr6GI&list=PLg5SS_4L6LYufspdPupdynbMQTBnZd31N
 
-*  **  **
+<br>
 
-## Install:
+***
+
+
+### Все разделы:
+
+1. <a href="#Install">Install</a><br>
+2. <a href="#Uninstall">Uninstall</a><br>
+3. <a href="#Поехали!">Поехали!</a><br>
+4. <a href="#Файл hosts.txt">Файл hosts.txt</a><br>
+5. <a href="#Add-Hoc команды">Add-Hoc команды</a><br>
+6. <a href="#Вынос переменных в файл">Вынос переменных в файл</a><br>
+7. <a href="#Создание Playbook">Создание Playbook</a><br>
+
+<br>
+
+***
+
+<a id="Install"></a>
+
+## 1. Install:
 
 ###### На управляемых серверах должен быть открыт порт 22
 
@@ -30,17 +49,27 @@ brew install ansible
 pip3 install ansible
 ```
 
-## Uninstall:
+<br>
+
+***
+
+<a id="Uninstall"></a>
+
+## 2. Uninstall:
 
 ```bash
 pip3 uninstall ansible
 ```
 
-*  **  **
+<br>
 
-## Поехали!
+***
 
-<br />
+<a id="Поехали!"></a>
+
+## 3. Поехали!
+
+<br>
 
 #### 1. Создание файла с описанием серверов:
 
@@ -54,7 +83,7 @@ pip3 uninstall ansible
 > linux3 ansible_host=3.236.186.202 ansible_user=ubuntu
 > ```
 
-<br /><br />
+<br>
 
 #### 2. Запуск команды "ping" на разных группах серверов:
 
@@ -70,7 +99,7 @@ ansible -i hosts.txt MYXA_SERVERS -m ping
 ansible -i hosts.txt STAGING_SERVERS -m ping
 ```
 
-<br /><br />
+<br>
 
 #### 3. Отображение версии и параметров Ansible
 
@@ -80,7 +109,7 @@ ansible --version
 
 *  `config file = None` - **Это означает что Конфиг файла у нас пока никакого нет**
 
-<br /><br />
+<br>
 
 #### 4. Создание файла конфигурации
 
@@ -102,11 +131,11 @@ ansible --version
 ansible all -m ping    
 ```
 
-<br /><br />
+<br>
 
 #### 6. Создание плейбука:
 
-> nano myfile.yml
+> nano myfile_1.yml
 > ```
 > ---
 > 
@@ -124,21 +153,28 @@ ansible all -m ping
 
 Важно не забыть написать "---" первой строкой файла!
 
-*  `- name:` **- Это называется Лист** 
+* `- name:` - **Это называется Лист** 
+* `become: yes` - **Это запуск команд в режиме SUDO**
 
-<br /><br />
+<br>
 
 #### 7. Запуск созданного плейбука:
 
 ```bash
-ansible-playbook myfile.yml
+ansible-playbook myfile_1.yml
 ```
 
-<br /><br /><br /><br />
+<br><br><br>
 
-## Более подробная инструкция по файлу "hosts.txt"
+***
+
+<a id="Файл hosts.txt"></a>
+
+## 4. Файл hosts.txt (расширенное описание)
 
 * https://www.youtube.com/watch?v=KsBb4ezQXq8&list=PLg5SS_4L6LYufspdPupdynbMQTBnZd31N&index=6
+
+<br>
 
 > nano hosts.txt
 > ```
@@ -228,13 +264,19 @@ ansible_user=ubuntu<br>
 ansible-inventory --list
 ```
 
-<br /><br /><br /><br />
+<br><br><br>
 
-## Более подробная инструкция по "Add-Hoc" командам
+***
+
+<a id="Add-Hoc команды"></a>
+
+## 5. Add-Hoc команды (расширенное описание)
 
 * https://www.youtube.com/watch?v=3eRQDA7Y-lA&list=PLg5SS_4L6LYufspdPupdynbMQTBnZd31N&index=7
 
-Add-Hoc — это отдельные команды, если она не в ПлейБуке
+<br>
+
+**Add-Hoc** — это просто отдельные команды, если она не в ПлейБуке.
 
 Пример запуска: 
 
@@ -246,81 +288,119 @@ ansible all -m ping
 ansible all -m shell -a "uptime"
 ```
 
+Ключ `-m` - обозначает "Модуль". 
+
+Описание всех доступных модулей можно взять по следующей команде:
+
+```bash
+ansible-doc -l
+```
+
 <br />
 
 ### Сами команды:
 
-*  `-m ping` **- Пинг**
-<br /><br />
-*  `-m setup` **- Сканировать сервер и выдать ВСЕ ВСЕ данные о нем**
-<br /><br />
-*  `-m shell -a "uptime"` **- Выполнить любую Линуксовскую команду**
-*  `-m shell -a "pwd"` **Показать путь к текущему месту**
-<br /><br />
-*  `-m command -a "uptime"` **- То-же самое что и shell, только запускается НЕ в режиме SHELL, тоесть он не будет видеть Environment Variables (Переменные окружающией среды) $HOME и < > | : &**
-<br /><br />
-*  `-m copy -a "src=2.txt dest=/home/ubuntu/ mode=777"` **- Скопировать файл на все сервера. А атрибут "mode=777" - необязательный параметр**
-<br /><br />
-*  `-m copy -a "src=2.txt dest=/home/ mode=777" -b` **- Скопировать файл в режиме SUDO**
-<br /><br />
-*  `-m file -a "path=/home/ububntu/1.txt state=absent"` **- Удаление файла или папки. Так-же, при помощи этого модуля можно создавать дериектории, ....**
-<br /><br />
-*  `-m get_url -a "url=https://neofacto.com/wp-content/uploads/2019/08/sticker-hello-300x211.png dest=/home/ubuntu/"` **- Скачать файл из интернета**
-<br /><br />
-*  `-m yum -a "name=stress state=installed" -b` **- Утсановка приложений (у меня не сработала)**
-*  `-m apt -a "name=stress state=latest" -b` **- Рабочая**
-*  `-m apt -a "name=gunicorn state=latest" -b`
-<br /><br />
-*  `-m apt -a "name=stress state=absent" -b` **- Удаление приложений**
-<br /><br />
-*  `-m uri -a "url=https://myxa.com.ua"` **- Проверить, может ли сервер подконнектиться к сайту (status: 200)**
-*  `-m uri -a "url=https://myxa.com.ua return_content=yes"` **- Получить контент с сайта**
-<br /><br />
-*  `-m service -a "name=httpd state=started enabled=yes" -b` **- Запустить сервис httpd (у меня не сработал, но должен был запуститься Apache на всех серврах). А параметр "enabled=yes" - это необязательный, позвонялет запускать данный сервис при старте всей системы**
-<br /><br />
-*  `-m ping -v` **- Запуск команд с подробной технической информацией о сервере**
-*  `-m ping -vv` **- с Более подробной информацией**
-*  `-m ping -vvv` **- с еще Более**
-*  `-m ping -vvvv` **- с еще Более**
-<br /><br />
-*  `-m reboot -b` **- Перезагрузить все сервера**
-<br /><br />
-   
-*  **  **
-*  **  **
-*  **  **
-*  **  **
 
-ansible-doc -l						- Показать все достпуне модули в ansible
+> Пинг
+> > ansible all -m ping
 
---------------------------------
-CREATE FOLDER
+> Сканировать сервер и выдать ВСЕ ВСЕ данные о нем
+> > ansible all -m setup
 
-From - Command line:
-> ansible all -m shell -a "mkdir World"
+<br>
 
+**Shell** - Выполнить любую Линуксовскую команду
 
-From - Playbook:
-- name: Creates directory
-  file:
-    path: Hello/123
-    state: directory
-    owner: ubuntu
-    group: ubuntu
-    mode: 0777
---------------------------------
-*  **  **
-*  **  **
-*  **  **
-*  **  **
+> Показать время работы сервера с момента загрузки
+> > ansible all -m shell -a "uptime"
 
+> Показать путь к текущему месту
+> > ansible all -m shell -a "pwd"
 
+> Создать папку "World" в глобальной папке пользователя (например: /home/ubuntu/)
+> > ansible all -m shell -a "mkdir World"
 
+<br>
 
-<br /><br /><br /><br />
-*  **  **
+**Сommand** - То-же самое что и shell, только запускается НЕ в режиме SHELL, тоесть он не будет видеть Environment Variables (Переменные окружающией среды) $HOME и < > | : &**
 
-## Вынос переменных в отдельный файл
+> Показать время работы сервера с момента загрузки
+> > ansible all -m command -a "uptime"
+
+<br>
+
+> Скопировать файл на все сервера. А атрибут "mode=777" - необязательный параметр
+> > ansible all -m copy -a "src=2.txt dest=/home/ubuntu/ mode=777"
+
+> Скопировать файл
+> > ansible all -m copy -a "src=2.txt dest=/home/ mode=777" -b
+
+Ключ `-b` - означает Запуск команд в режиме SUDO
+
+<br>
+
+> Удаление файла или папки. Так-же, при помощи этого модуля можно создавать дериектории, ....
+> > ansible all -m file -a "path=/home/ububntu/1.txt state=absent"
+
+> Скачать файл из интернета
+> > ansible all -m get_url -a "url=https://neofacto.com/wp-content/uploads/2019/08/sticker-hello-300x211.png dest=/home/ubuntu/"
+
+<br>
+
+> Установка приложений (у меня не сработала)
+> > ansible all -m yum -a "name=stress state=installed" -b
+
+> Рабочая
+> > ansible all -m apt -a "name=stress state=latest" -b
+> > 
+> > ansible all -m apt -a "name=gunicorn state=latest" -b
+
+<br>
+
+> Удаление приложений
+> > ansible all -m apt -a "name=stress state=absent" -b
+
+<br>
+
+> Проверить, может ли сервер подконнектиться к сайту (status: 200)
+> > ansible all -m uri -a "url=https://myxa.com.ua"
+
+> Получить контент с сайта
+> > ansible all -m uri -a "url=https://myxa.com.ua return_content=yes"
+
+<br>
+
+> Запустить сервис httpd (у меня не сработал, но должен был запуститься Apache на всех серврах).
+> > ansible all -m service -a "name=httpd state=started enabled=yes" -b
+
+Параметр `enabled=yes` - необязательный, позволяет запускать данный сервис при старте всей системы.
+
+<br>
+
+> Запуск команд с подробной технической информацией о сервере
+> > ansible all -m ping -v` **- **
+
+> С БОЛЕЕ подробной информацией
+> > ansible all -m ping -vv
+
+> С еще БОЛЕЕ
+> > ansible all -m ping -vvv
+
+> С еще БОЛЕЕ
+> > ansible all -m ping -vvvv
+
+<br>
+
+> Перезагрузить все сервера
+> > ansible all -m reboot -b
+
+<br><br><br>
+
+***
+
+<a id="Вынос переменных в файл"></a>
+
+## 6. Вынос переменных в отдельный файл
 
 * https://www.youtube.com/watch?v=_fAgi3jeQJM&list=PLg5SS_4L6LYufspdPupdynbMQTBnZd31N&index=9
 
@@ -369,10 +449,116 @@ mkdir group_vars
 #### Запуск и проверка:
 
 ```bash
-ansible-playbook myfile.yml
+ansible-playbook myfile_1.yml
 ```
 
-*  **  **
+<br><br><br>
+
+***
+
+<a id="Создание Playbook"></a>
+
+## 7. Создание Playbook
+
+* https://www.youtube.com/watch?v=5VjcJNQ7nlI&list=PLg5SS_4L6LYufspdPupdynbMQTBnZd31N&index=10
+
+<br>
+
+Вариант № 1
+
+> nano myfile_1.yml
+> ```
+> ---
+> 
+> - name: Test Connection to my servers
+>   hosts: all
+>   become: yes
+>
+>   tasks:
+>
+>   - name: Ping my servers
+>     ping:
+> 
+> ...
+> ```
+
+<br>
+
+Вариант № 2
+
+> nano myfile_2.yml
+> ```
+> ---
+> 
+> - name: Create custom Folder an install Gunicorn
+>   hosts: STAGING_SERVERS
+>   become: yes
+>
+>   tasks:
+>
+>   - name: Create Folder
+>     file:
+>         path : Hello/123
+>         state: directory
+>         owner: ubuntu
+>         group: ubuntu
+>         mode : 0777
+> 
+>   - name: Install Gunicorn
+>     yum: name=gunicorn state=latest
+> 
+>   - name: Start Gunicorn and Enabled in on the every boot 
+>     service: name=gunicorn state=started enabled=yes
+> 
+> ...
+> ```
+
+<br>
+
+Вариант № 3
+
+> nano myfile_3.yml
+> ```
+> ---
+> 
+> - name: Install Apache and Upload my Web page
+>   hosts: STAGING_SERVERS
+>   become: yes
+> 
+>   vars:
+>     source_file: ./MyWebSite/index.html
+>     destin_file: /var/www/html
+> 
+>   tasks:
+>   - name: Update apt-get repo and cache
+>     apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+> 
+>   - name: Install Apache Web Server
+>     apt: name=apache2 state=latest
+> 
+>   - name: Install MINI-HTTPD Web Server
+>     apt: name=mini-httpd state=latest
+> 
+>   - name: Copy myHomePage to Servers
+>     copy: src={{ source_file }} dest={{ destin_file }} mode=0555
+>     notify: Restart Apache
+> 
+>   - name: Start WebServer and make it enable on boot
+>     service: name=mini-httpd state=started enabled=yes
+> 
+>   handlers:
+>   - name: Restart Apache
+>     service: name=mini-httpd state=restarted
+> 
+> ...
+> ```
+
+Конструкция `{{ source_file }}` и `{{ destin_file }}` позволяет использовать переменные из раздела "vars".  
+
+Конструкция `handlers:` запуститься только в том случае — если файл изменился и скопировался на сервер в задаче "Copy myHomePage to Servers".
+
+
+
 
 
 
@@ -398,4 +584,3 @@ sudo chmod 666 /var/run/docker.sock
 ----------------------------------------------------
 
 ===================================================================
-

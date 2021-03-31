@@ -2,5 +2,7 @@
 linux1 ansible_host=4.211.183.122
 
 [STAGING_SERVERS]
-linux2 ansible_host=3.235.169.51
-linux3 ansible_host=3.220.167.38
+linux2 ansible_host=3.239.148.62
+linux3 ansible_host=3.232.108.33
+linux4 ansible_host=3.238.39.18
+linux5 ansible_host=3.237.240.253
