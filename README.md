@@ -24,6 +24,7 @@
 5. <a href="#Add-Hoc команды">Add-Hoc команды</a><br>
 6. <a href="#Вынос переменных в файл">Вынос переменных в файл</a><br>
 7. <a href="#Создание Playbook">Создание Playbook</a><br>
+- <a href="#Возможные ошибки">Возможные ошибки</a><br>
 
 <br>
 
@@ -557,30 +558,144 @@ ansible-playbook myfile_1.yml
 
 Конструкция `handlers:` запуститься только в том случае — если файл изменился и скопировался на сервер в задаче "Copy myHomePage to Servers".
 
+<br><br><br>
+
+***
+
+<a id="Создание Playbook"></a>
+
+## 8. Переменные - Debug, Set_fact, Register
+
+* https://www.youtube.com/watch?v=-vuZdaMdX4I&list=PLg5SS_4L6LYufspdPupdynbMQTBnZd31N&index=11
+
+<br>
+
+Добавляем для каждого сервера переменные "owner" (в файл с описанием серваров):
+
+> nano hosts.txt
+> ```
+> [STAGING_SERVERS]
+> linux2 ansible_host=34.231.225.44 owner=VASYA
+> linux3 ansible_host=35.175.127.130 owner=Petya
+> ```
+ 
+<br>
+
+Создаем новый Плейбук:
+
+> nano myfile_4.yml
+> ```
+> ---
+> 
+> - name: Playbook for Variables Lesson
+>   hosts: STAGING_SERVERS
+>   become: yes
+> 
+>   vars:
+>     message1 : Hello
+>     message2 : World
+>     secret   : AABBCCDDEE
+> 
+>   tasks:
+>   - name: Print 1 Secret variable From playbook
+>     debug:
+>       var: secret
+> ```
+
+`var:` - Выводит значение переменных
+
+<br>
+
+> ```
+>   - name: Print 2 Secret variable From playbook
+>     debug:
+>       msg: "Sekretnoe slovo: {{ secret }}"
+> 
+>   - name: Print Secret variable From Hosts
+>     debug:
+>       msg: "Vladelec etogo servera: {{ owner }}"
+> ```
+
+`msg:` - Выводит сообщения
+
+<br>
+
+Соединение переменных:
+
+> ```
+>   - set_fact: full_message="{{ message1 }} {{ message2 }} from {{ owner }}"
+> 
+>   - name: Print new variables - full_message
+>     debug:
+>       var: full_message
+> ```
+
+<br>
+
+Вывод дефолтных переменных с данными серверов (полученных командой `ansible all -m setup`)
+
+> ```
+>   - name: Print default variable from server
+>     debug:
+>       var: ansible_distribution
+> ```
+
+<br>
+
+Создание переменной "results" с результатами выполнения команды `uptime`.<br>
+А так-же вывод Полных данных или только из Определенного ключа:
+
+> ```
+>   - name: Create OUTPUT data from command
+>     shell: uptime
+>     register: results
+> 
+>   - name: Print new results - Full
+>     debug:
+>       var: results
+> 
+>   - name: Print new results - Only one key
+>     debug:
+>       var: results.stdout
+> ```
+
+<br><br><br>
+
+***
+
+<a id="ХХХ"></a>
+
+## 9. ХХХ
 
 
 
 
+<br><br><br><br><br>
 
+<a id="Возможные ошибки"></a>
 
-<br /><br /><br /><br /><br /><br /><br /><br />
-<br /><br /><br /><br /><br /><br /><br /><br />
+***
 
-===================================================================
-Ошибка: Невозможно заголиниться на "docker login registry-exist.exist.ua" или выполнить "docker run hello-world"
----------------------------------------------------
+### Возможная ошибка № 1: 
+Невозможно залогиниться на `docker login registry-exist.exist.ua` или выполнить `docker run hello-world`
 
+***
+
+```
 sudo chmod 666 /var/run/docker.sock
+```
 
-----------------------------------------------------
-https://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo
-----
+***
+
+* https://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo
+
+```
 sudo -s
-sudo groupadd docker
-sudo usermod -aG docker ysstepanenko
-sudo chown root:docker /var/run/docker.sock
-sudo chown -R root:docker /var/run/docker
-sudo chmod 666 /var/run/docker.sock
-----------------------------------------------------
+> sudo groupadd docker
+> sudo usermod -aG docker ysstepanenko
+> sudo chown root:docker /var/run/docker.sock
+> sudo chown -R root:docker /var/run/docker
+> sudo chmod 666 /var/run/docker.sock
+> ```
 
-===================================================================
+***

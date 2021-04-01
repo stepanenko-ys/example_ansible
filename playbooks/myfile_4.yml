@@ -1,0 +1,47 @@
+---
+
+- name: Playbook for Variables Lesson
+  hosts: STAGING_SERVERS
+  become: yes
+
+  vars:
+    message1 : Hello
+    message2 : World
+    secret   : AABBCCDDEE
+
+  tasks:
+  - name: Print 1 Secret variable From playbook
+    debug:
+      var: secret
+
+  - name: Print 2 Secret variable From playbook
+    debug:
+      msg: "Sekretnoe slovo: {{ secret }}"
+
+  - name: Print Secret variable From Hosts
+    debug:
+      msg: "Vladelec etogo servera: {{ owner }}"
+
+  - set_fact: full_message="{{ message1 }} {{ message2 }} from {{ owner }}"
+
+  - name: Print new variables - full_message
+    debug:
+      var: full_message
+
+  - name: Print default variable from server
+    debug:
+      var: ansible_distribution
+
+  - name: Create OUTPUT data from command
+    shell: uptime
+    register: results
+
+  - name: Print new results - Full
+    debug:
+      var: results
+
+  - name: Print new results - Only one key
+    debug:
+      var: results.stdout
+
+...
